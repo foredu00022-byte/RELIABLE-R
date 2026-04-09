@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reliable Residentials | Heritage-Tech Infrastructure</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@200;400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --navy-bg: #020617; 
+            --navy-card: #0f172a; 
+            --gold: #ffdb58;
+            --white: #ffffff;
+            --slate: #94a3b8;
+            --radius: 45px;
+            --border: rgba(255, 219, 88, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { background: var(--navy-bg); color: var(--white); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; width: 94%; left: 3%; top: 20px; 
+            padding: 12px 40px; display: flex; justify-content: space-between; 
+            align-items: center; z-index: 1000;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px); border-radius: 100px; border: 1px solid var(--border);
+        }
+        .nav-links { display: flex; gap: 30px; list-style: none; }
+        .nav-links a { text-decoration: none; color: white; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; }
+
+        /* --- HERO & LIVE METRICS --- */
+        .hero { height: 100vh; padding: 0 10%; display: flex; align-items: center; gap: 50px; position: relative; }
+        .hero h1 { font-family: 'Cinzel'; font-size: clamp(3rem, 7vw, 6rem); line-height: 1; }
+        
+        .live-metrics {
+            position: absolute; bottom: -40px; left: 10%; width: 80%;
+            background: var(--gold); border-radius: 100px; padding: 30px;
+            display: flex; justify-content: space-around; z-index: 100;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
+        .metric-item { text-align: center; flex: 1; border-right: 1px solid rgba(0,0,0,0.1); }
+        .metric-item:last-child { border: none; }
+        .metric-item p { color: var(--navy-bg); font-family: 'Space Mono'; font-size: 0.6rem; font-weight: 800; }
+        .metric-item h4 { color: var(--navy-bg); font-family: 'Cinzel'; font-size: 1.4rem; }
+
+        /* --- INFRASTRUCTURE REVEAL --- */
+        .infra-section { padding: 180px 6% 100px; display: grid; grid-template-columns: 1fr 1fr; gap: 100px; }
+        .infra-card { background: var(--navy-card); border-radius: var(--radius); padding: 60px; border: 1px solid var(--border); position: relative; }
+        .feature-tag { background: var(--gold); color: var(--navy-bg); padding: 5px 15px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; position: absolute; top: -15px; left: 60px; }
+
+        /* --- BENTO PORTFOLIO --- */
+        .bento { padding: 100px 6%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .bento-item { background: var(--navy-card); border-radius: var(--radius); overflow: hidden; height: 380px; border: 1px solid var(--border); position: relative; }
+        .bento-item video, .bento-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: 0.6s; }
+        .bento-item:hover video { opacity: 0.9; transform: scale(1.05); }
+        .b-large { grid-column: span 2; grid-row: span 2; height: 780px; }
+
+        /* --- HIMALAYAN AUTONOMY --- */
+        .autonomy { padding: 100px 6%; text-align: center; }
+        .auto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 60px; }
+        .auto-card { border: 1px solid var(--border); padding: 40px; border-radius: var(--radius); transition: 0.3s; }
+        .auto-card:hover { background: var(--navy-card); transform: scale(1.02); }
+
+        /* --- DATA LEDGER --- */
+        .table-box { background: var(--navy-card); margin: 100px 6%; padding: 60px; border-radius: var(--radius); border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+        th { text-align: left; color: var(--gold); padding: 20px; border-bottom: 1px solid var(--border); font-family: 'Space Mono'; font-size: 0.7rem; }
+        td { padding: 25px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--slate); font-size: 0.9rem; }
+
+        /* --- WHY CHOOSE US (THE CLOSER) --- */
+        .why-us { padding: 120px 6%; background: var(--navy-card); margin: 0 6% 100px; border-radius: var(--radius); border: 1px solid var(--border); }
+        .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 60px; }
+        .why-card h3 { font-family: 'Cinzel'; color: var(--gold); margin-bottom: 15px; }
+
+        /* --- VAULT ACCESS --- */
+        .vault-bar { background: #000; padding: 40px 10%; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        
+        /* --- CTA --- */
+        .cta { margin: 100px 6%; background: var(--gold); color: var(--navy-bg); padding: 80px; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; }
+        .btn-black { background: var(--navy-bg); color: var(--white); border: none; padding: 22px 50px; border-radius: 100px; font-family: 'Cinzel'; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .btn-black:hover { letter-spacing: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        footer { padding: 80px 10%; text-align: center; color: #1e293b; font-size: 0.7rem; letter-spacing: 2px; }
+
+        @media (max-width: 1000px) {
+            .hero, .infra-section, .auto-grid, .why-grid, .cta, .live-metrics { flex-direction: column; display: block; height: auto; }
+            .live-metrics { border-radius: 30px; position: static; margin-top: 50px; }
+            .metric-item { border: none; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 20px 0; }
+            .bento { grid-template-columns: 1fr; }
+            .b-large { height: 400px; }
+        }
+
+
+	<div id="vaultModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(2,6,23,0.95); z-index:2000; justify-content:center; align-items:center; backdrop-filter:blur(15px);">
+    <div style="background:var(--navy-card); padding:60px; border-radius:var(--radius); border:1px solid var(--gold); text-align:center; max-width:500px; width:90%;">
+        <h2 style="font-family:'Cinzel'; color:var(--gold); margin-bottom:20px;">Secure Access Required</h2>
+        <p style="color:var(--slate); font-size:0.9rem; line-height:1.6; margin-bottom:30px;">The Digital Twin Vault is encrypted for active project stakeholders only. Please enter your credentials or initialize an audit to gain access.</p>
+        
+        <input type="password" placeholder="ENTER ACCESS CODE" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); padding:15px; border-radius:15px; color:white; text-align:center; font-family:'Space Mono'; margin-bottom:20px;">
+        
+        <div style="display:flex; flex-direction:column; gap:15px;">
+            <button class="btn-black" style="background:var(--gold); color:var(--navy-bg); width:100%;">VALIDATE CREDENTIALS</button>
+            <button onclick="window.location.href='audit.html'" class="btn-black" style="background:transparent; border:1px solid var(--border); color:var(--white); width:100%;">REQUEST ACCESS (INITIATE AUDIT)</button>
+            <button onclick="document.getElementById('vaultModal').style.display='none'" style="background:none; border:none; color:var(--slate); font-size:0.7rem; cursor:pointer; margin-top:10px; font-family:'Space Mono';">_EXIT_TERMINAL</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // This function forces the link regardless of when the page finishes loading
+    function initializeBimLinks() {
+        document.querySelectorAll('button, a').forEach(element => {
+            const text = element.innerText.toUpperCase();
+            if(text.includes('VAULT') || text.includes('BIM')) {
+                // Remove any old clicks and add the new one
+                element.onclick = null; 
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = 'portal.html';
+                });
+                // Adds a pointer cursor just to be sure it looks clickable
+                element.style.cursor = 'pointer';
+            }
+        });
+    }
+
+    // Run once immediately
+    initializeBimLinks();
+    
+    // Run again once the full window is ready
+    window.onload = initializeBimLinks;
+</script>
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo-wrap"><img src="high-resolution-color-logo (1).png" alt="Logo"></div>
+        <ul class="nav-links">
+            <li><a href="#projects">PORTFOLIO</a></li>
+            <li><a href="#tech">INFRASTRUCTURE</a></li>
+            <li><a href="#why">WHY CHOOSE US</a></li>
+        </ul>
+        <button class="btn-black" style="padding:10px 25px; font-size:0.6rem;">CLIENT VAULT</button>
+    </nav>
+
+    <header class="hero">
+        <div style="flex: 1.2;">
+            <span style="color: var(--gold); font-family: 'Space Mono'; font-size: 0.7rem; letter-spacing: 5px;">EST. 2026 // NEPAL</span>
+            <h1 class="reveal">Reliable <br><span style="color: var(--gold)">Residentials</span></h1>
+            <p class="reveal" style="color: var(--slate); margin-top: 30px; max-width: 500px; line-height: 1.8;">High-fidelity structural engineering meeting Himalayan heritage. Building legacies that survive time and tectonic shifts.</p>
+        </div>
+        <div class="reveal" style="flex: 1; height: 60vh; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);">
+            <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;">
+                <source src="hero-bg.mp4" type="video/mp4">
+            </video>
+        </div>
+        
+        <div class="live-metrics reveal">
+            <div class="metric-item">
+                <p>PROJECTS ACTIVE</p>
+                <h4>08 SOVEREIGN</h4>
+            </div>
+            <div class="metric-item">
+                <p>SEISMIC RATING</p>
+                <h4>ZONE V+ READY</h4>
+            </div>
+            <div class="metric-item">
+                <p>CONCRETE VOLUME</p>
+                <h4>14,200 m&sup3;</h4>
+            </div>
+            <div class="metric-item">
+                <p>LOCATION</p>
+                <h4>KTM, NEPAL</h4>
+            </div>
+        </div>
+    </header>
+
+    <section id="tech" class="infra-section">
+        <div class="reveal">
+            <h2 style="font-family:'Cinzel'; font-size: 2.5rem; margin-bottom: 30px;">Invisible <br><span style="color:var(--gold)">Engineering</span></h2>
+            <p style="color:var(--slate); line-height: 1.8;">Luxury isn't just what you see; it's what's hidden inside the walls. Our builds are living machines designed for longevity and environmental autonomy.</p>
+        </div>
+        <div class="infra-card reveal">
+            <span class="feature-tag">INTERNAL SYSTEMS</span>
+            <ul style="list-style:none; line-height: 2.5; font-size: 0.9rem; color: var(--slate);">
+                <li><strong style="color:var(--gold);">_</strong> Smart Nervous System (Fiber-Optic Backbone)</li>
+                <li><strong style="color:var(--gold);">_</strong> HEPA-Filtered Respiratory HVAC</li>
+                <li><strong style="color:var(--gold);">_</strong> Monolithic Raft Foundations (Zone V)</li>
+                <li><strong style="color:var(--gold);">_</strong> Thermal Mass Climate Regulation</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="projects" class="bento">
+        <div class="bento-item b-large reveal">
+            <video autoplay muted loop playsinline><source src="foundation-scan.mp4" type="video/mp4"></video>
+        </div>
+        <div class="bento-item reveal">
+            <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800&q=80">
+        </div>
+        <div class="bento-item reveal">
+            <video autoplay muted loop playsinline><source src="heritage-craft.mp4" type="video/mp4"></video>
+        </div>
+        <div class="bento-item reveal" style="grid-column: span 2;">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80">
+        </div>
+    </section>
+
+    <section class="autonomy">
+        <span style="color: var(--gold); font-family: 'Space Mono'; font-size: 0.7rem; letter-spacing: 5px;">ENVIRONMENTAL SOVEREIGNTY</span>
+        <h2 style="font-family:'Cinzel'; font-size: 2.5rem; margin-top: 10px;">The Himalayan <span style="color:var(--gold)">Response</span></h2>
+        <div class="auto-grid">
+            <div class="auto-card reveal">
+                <h4 style="font-family:'Cinzel'; margin-bottom: 15px;">Solar Autonomy</h4>
+                <p style="color:var(--slate); font-size:0.85rem;">Integrated energy tiles and power-wall backups for 24/7 reliability.</p>
+            </div>
+            <div class="auto-card reveal">
+                <h4 style="font-family:'Cinzel'; margin-bottom: 15px;">Water Cycle</h4>
+                <p style="color:var(--slate); font-size:0.85rem;">Deep-well nano-filtration and closed-loop harvesting systems.</p>
+            </div>
+            <div class="auto-card reveal">
+                <h4 style="font-family:'Cinzel'; margin-bottom: 15px;">Air Purity</h4>
+                <p style="color:var(--slate); font-size:0.85rem;">Positive pressure ERV systems ensuring AQI < 10 indoors at all times.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="table-box reveal">
+        <h2 style="font-family:'Cinzel';">Sovereign <span style="color:var(--gold)">Benchmarks</span></h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>PARAMETER</th>
+                    <th>RELIABLE STANDARD</th>
+                    <th>INDUSTRY AVERAGE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Concrete Grade</td>
+                    <td>M45 Industrial Design Mix</td>
+                    <td>M20 Nominal</td>
+                </tr>
+                <tr>
+                    <td>Seismic Damping</td>
+                    <td>Continuous Monolithic Raft</td>
+                    <td>Standard Isolated Footing</td>
+                </tr>
+                <tr>
+                    <td>Digital Precision</td>
+                    <td>LOD 400 BIM Modeling</td>
+                    <td>Standard 2D Blueprints</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="why" class="why-us reveal">
+        <h2 style="font-family:'Cinzel'; font-size: 2.2rem;">Why Reliable <span style="color:var(--gold)">Residentials?</span></h2>
+        <div class="why-grid">
+            <div class="why-card">
+                <h3>Absolute Safety</h3>
+                <p>We build with 25% more structural redundancy than the Nepal Building Code requires. Your safety is mathematically guaranteed.</p>
+            </div>
+            <div class="why-card">
+                <h3>Heritage DNA</h3>
+                <p>We utilize Himalayan slate, dark teak, and stone slabs to maintain cultural heritage while integrating future-ready technology.</p>
+            </div>
+            <div class="why-card">
+                <h3>Zero Overruns</h3>
+                <p>Our 8K Digital Twins ensure every pipe and wire is accounted for before construction starts, eliminating surprise costs.</p>
+            </div>
+        </div>
+    </section>
+
+<div class="vault-bar reveal">
+    <div>
+        <h4 style="font-family:'Cinzel';">Encrypted Client Vault</h4>
+        <p style="color:var(--slate); font-size:0.75rem;">Secure access for current project stakeholders.</p>
+    </div>
+    <a href="bim.html" style="text-decoration: none;">
+        <button class="btn-black" style="padding:15px 40px; border:1px solid var(--gold); color:var(--gold); cursor: pointer;">
+            LOGIN TO BIM TWIN
+        </button>
+    </a>
+</div>
+
+    <section class="cta reveal">
+        <div>
+            <h2>Architect Your <br>Sovereignty.</h2>
+            <p style="margin-top: 20px; font-weight: 500;">Private audits for high-net-worth developments in Nepal.</p>
+        </div>
+        <a href="audit.html" class="btn-black">INITIATE AUDIT</a>
+    </section>
+
+    <footer>
+        <img src="logo.png" alt="Logo" style="height: 50px; opacity: 0.1; margin-bottom: 25px;">
+        <p>&copy; 2026 Reliable Residentials | Engineering Excellence in Kathmandu.</p>
+    </footer>
+
+    <script>
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        gsap.registerPlugin(ScrollTrigger);
+        document.querySelectorAll('.reveal').forEach((el) => {
+            gsap.from(el, {
+                scrollTrigger: { trigger: el, start: "top 90%" },
+                y: 40, opacity: 0, duration: 1, ease: "power2.out"
+            });
+        });
+    </script>
+</body>
+</html>

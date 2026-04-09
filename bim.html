@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign Vault | Reliable Residentials</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&family=Space+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --navy-bg: #010409; 
+            --navy-card: #0d1117; 
+            --gold: #ffdb58;
+            --white: #ffffff;
+            --slate: #484f58;
+            --border: rgba(255, 219, 88, 0.2);
+            --radius: 24px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+        body { background: var(--navy-bg); color: var(--white); font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; display: flex; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 320px; background: var(--navy-card); border-right: 1px solid var(--border);
+            padding: 40px; display: flex; flex-direction: column; z-index: 10;
+        }
+        .sidebar h2 { font-family: 'Cinzel'; font-size: 1.1rem; color: var(--gold); letter-spacing: 2px; margin-bottom: 50px; }
+
+        .nav-item {
+            padding: 18px; border-radius: 12px; margin-bottom: 8px;
+            cursor: pointer; transition: 0.3s; color: var(--slate);
+            font-family: 'Space Mono'; font-size: 0.7rem; border: 1px solid transparent;
+        }
+        .nav-item:hover { background: rgba(255, 219, 88, 0.05); color: var(--white); }
+        .nav-item.active { background: rgba(255, 219, 88, 0.1); color: var(--gold); border: 1px solid var(--border); }
+
+        /* --- MAIN VIEWPORT --- */
+        .viewport { flex: 1; display: flex; flex-direction: column; position: relative; }
+
+        .header {
+            padding: 30px 50px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(13, 17, 23, 0.5); backdrop-filter: blur(10px);
+        }
+
+        .render-area {
+            flex: 1; margin: 30px; border-radius: var(--radius); border: 1px solid var(--border);
+            background: #000; position: relative; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+        
+        .scan-line {
+            position: absolute; width: 100%; height: 2px; background: var(--gold);
+            opacity: 0.3; top: 0; left: 0; animation: scan 4s linear infinite; box-shadow: 0 0 15px var(--gold);
+        }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+        .grid-layer {
+            position: absolute; width: 100%; height: 100%;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 40px 40px; opacity: 0.15;
+        }
+
+        #terminalLog {
+            position: absolute; bottom: 20px; right: 20px; width: 280px; height: 120px;
+            font-family: 'Space Mono'; font-size: 0.55rem; color: #00ff64;
+            overflow: hidden; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 10px;
+        }
+
+        /* DATA BAR */
+        .data-bar {
+            height: 180px; padding: 0 50px; display: grid; grid-template-columns: repeat(4, 1fr);
+            align-items: center; border-top: 1px solid var(--border); background: var(--navy-card);
+        }
+        .stat-box h5 { font-family: 'Space Mono'; color: var(--slate); font-size: 0.6rem; letter-spacing: 1px; margin-bottom: 8px; }
+        .stat-box p { font-family: 'Cinzel'; font-size: 1.1rem; color: var(--white); }
+
+        /* AUTH OVERLAY */
+        #authOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--navy-bg); z-index: 1000; display: flex; justify-content: center; align-items: center;
+        }
+        .auth-box {
+            text-align: center; border: 1px solid var(--border); padding: 60px; border-radius: var(--radius);
+            background: var(--navy-card); min-width: 400px;
+        }
+
+        .btn-exit {
+            margin-top: auto; color: var(--slate); text-decoration: none; font-family: 'Space Mono';
+            font-size: 0.65rem; display: flex; align-items: center; gap: 10px; transition: 0.3s;
+        }
+        .btn-exit:hover { color: var(--gold); transform: translateX(-5px); }
+    </style>
+</head>
+<body>
+
+    <div id="authOverlay">
+        <div class="auth-box">
+            <h1 style="font-family:'Cinzel'; color:var(--gold); margin-bottom: 20px;">ENCRYPTED_VAULT</h1>
+            <p style="color:var(--slate); font-size: 0.75rem; margin-bottom: 30px; font-family: 'Space Mono';">AWAITING SYSTEM OWNER TOKEN...</p>
+            <input type="password" id="passInput" placeholder="ENTER_TOKEN" style="background:transparent; border:1px solid var(--border); padding:15px; color:white; border-radius:100px; text-align:center; font-family:'Space Mono'; margin-bottom:20px; width: 100%;">
+            <button onclick="checkAuth()" style="background:var(--gold); color:var(--navy-bg); border:none; padding:15px 40px; border-radius:100px; font-family:'Cinzel'; font-weight:900; width:100%; cursor:pointer;">ACCESS TWIN</button>
+            <a href="index.html" style="display:block; margin-top:25px; color:var(--slate); text-decoration:none; font-size:0.6rem; font-family:'Space Mono'; opacity:0.5;">_ABORT_CONNECTION_</a>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <h2>RELIABLE<br><span style="color:var(--white)">VAULT</span></h2>
+        
+        <div class="nav-item active" onclick="switchTab(this, 'PRIMARY_OVERVIEW', '27.7172', '85.3240')">_PRIMARY_OVERVIEW</div>
+        <div class="nav-item" onclick="switchTab(this, 'XRAY_STRUCTURAL', 'STEEL_ISO', 'NODES_OK')">_XRAY_STRUCTURAL</div>
+        <div class="nav-item" onclick="switchTab(this, 'ELECTRICAL_GRID', 'GRID_ALPHA', 'VOLT_STABLE')">_ELECTRICAL_GRID</div>
+        <div class="nav-item" onclick="switchTab(this, 'FOUNDATION_STATS', 'RAFT_DEPTH', '12_METERS')">_FOUNDATION_STATS</div>
+        <div class="nav-item" onclick="switchTab(this, 'LEGAL_DOCS', 'PERMIT_V04', 'SIGNED')">_LEGAL_DOCS</div>
+
+        <a href="index.html" class="btn-exit">
+            <svg width="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            _EXIT_CORE_
+        </a>
+    </aside>
+
+    <main class="viewport">
+        <div class="header">
+            <div>
+                <p id="viewID" style="font-family:'Space Mono'; font-size:0.55rem; color:var(--gold);">PROJECT_ID: ESTATE_09_KTM</p>
+                <h3 id="viewTitle" style="font-family:'Cinzel';">THE NORTH_RIDGE ESTATE</h3>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-family:'Space Mono'; font-size:0.55rem; color:var(--slate);">SYSTEM_STATUS</p>
+                <p id="statusMsg" style="font-family:'Space Mono'; font-size:0.6rem; color:#00ff64;">● OPTIMAL_STABILITY</p>
+            </div>
+        </div>
+
+        <div class="render-area">
+            <div class="grid-layer"></div>
+            <div class="scan-line"></div>
+            
+            <div id="coordinateOverlay" style="position:absolute; top:30px; left:30px; font-family:'Space Mono'; font-size:0.6rem; color:var(--gold); line-height:2;">
+                SCAN_REF: BIM_L4<br>
+                VAL_A: 27.7172<br>
+                VAL_B: 85.3240<br>
+                Z_AXIS: 100%
+            </div>
+
+            <img id="mainImage" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80" style="width: 75%; opacity: 0.3; filter: grayscale(1) contrast(1.2);">
+
+            <div id="terminalLog"></div>
+        </div>
+
+        <div class="data-bar">
+            <div class="stat-box"><h5>INTEGRITY</h5><p id="stat1">9.5 MAG</p></div>
+            <div class="stat-box"><h5>ENVIRONMENT</h5><p id="stat2">AQI_004</p></div>
+            <div class="stat-box) "><h5>LOAD_PATH</h5><p id="stat3">M45_MIX</p></div>
+            <div class="stat-box"><h5>COMPLETION</h5><p id="stat4">OCT 2026</p></div>
+        </div>
+    </main>
+
+    <script>
+        function checkAuth() {
+            const pass = document.getElementById('passInput').value;
+            // Token set to 'yubaraj'
+            if(pass === "yubaraj") {
+                gsap.to("#authOverlay", { 
+                    opacity: 0, 
+                    scale: 1.1, 
+                    duration: 0.8, 
+                    ease: "power4.inOut", 
+                    onComplete: () => {
+                        document.getElementById('authOverlay').style.display = 'none';
+                        startLog();
+                        document.getElementById('terminalLog').innerHTML += "> WELCOME_BACK_YUBARAJ...<br>";
+                    }
+                });
+            } else {
+                alert("ACCESS_DENIED: INVALID_TOKEN");
+                document.getElementById('passInput').value = "";
+            }
+        }
+
+        function switchTab(el, title, valA, valB) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+
+            document.getElementById('viewTitle').innerText = title.replace('_', ' ');
+            document.getElementById('coordinateOverlay').innerHTML = `SCAN_REF: ${title}<br>VAL_A: ${valA}<br>VAL_B: ${valB}<br>Z_AXIS: 100%`;
+            
+            const log = document.getElementById('terminalLog');
+            log.innerHTML += `> RE-ROUTING_TO_${title}...<br>`;
+            
+            gsap.from("#mainImage", { opacity: 0, scale: 1.05, duration: 0.5 });
+        }
+
+        function startLog() {
+            const log = document.getElementById('terminalLog');
+            const msgs = [
+                "> ANALYZING_SOIL_DATA...", 
+                "> BEAM_LOAD_STABLE...", 
+                "> TECTONIC_SCAN_PASS...", 
+                "> SYNCING_BIM_MODEL...",
+                "> ENCRYPTION_ACTIVE..."
+            ];
+            setInterval(() => {
+                const p = document.createElement('div');
+                p.innerHTML = msgs[Math.floor(Math.random() * msgs.length)];
+                log.appendChild(p);
+                if(log.childNodes.length > 6) log.removeChild(log.childNodes[0]);
+                log.scrollTop = log.scrollHeight;
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

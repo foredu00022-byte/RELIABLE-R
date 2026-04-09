@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initiate Audit | Reliable Residentials</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@200;400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --navy-bg: #020617; 
+            --navy-card: #0f172a; 
+            --gold: #ffdb58;
+            --white: #ffffff;
+            --slate: #94a3b8;
+            --border: rgba(255, 219, 88, 0.15);
+            --radius: 30px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { 
+            background: var(--navy-bg); 
+            color: var(--white); 
+            font-family: 'Inter', sans-serif; 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* --- BACK BUTTON --- */
+        .back-nav {
+            position: absolute; top: 40px; left: 40px;
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; color: var(--slate);
+            font-family: 'Space Mono'; font-size: 0.7rem;
+            letter-spacing: 2px; transition: 0.3s;
+            z-index: 100;
+        }
+        .back-nav:hover { color: var(--gold); transform: translateX(-5px); }
+        .back-nav svg { fill: currentColor; width: 15px; }
+
+        /* --- BACKGROUND DECOR --- */
+        .glow {
+            position: absolute; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(255, 219, 88, 0.05) 0%, rgba(2, 6, 23, 0) 70%);
+            top: -200px; right: -200px; z-index: -1;
+        }
+
+        /* --- PORTAL CONTAINER --- */
+        .portal-container {
+            width: 90%; max-width: 1000px; background: var(--navy-card);
+            border-radius: var(--radius); border: 1px solid var(--border);
+            display: grid; grid-template-columns: 1fr 1.5fr; overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        /* --- LEFT SIDE: INFO --- */
+        .portal-info {
+            padding: 60px; background: rgba(0,0,0,0.2);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .portal-info h2 { font-family: 'Cinzel'; font-size: 2.5rem; line-height: 1.1; margin-bottom: 20px; }
+        .step-indicator { margin-top: 40px; }
+        .step-item { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; opacity: 0.3; transition: 0.5s; }
+        .step-item.active { opacity: 1; }
+        .step-circle { width: 30px; height: 30px; border: 1px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Space Mono'; font-size: 0.7rem; color: var(--gold); }
+
+        /* --- RIGHT SIDE: FORM --- */
+        .portal-form { padding: 60px; position: relative; }
+        .form-section { display: none; }
+        .form-section.active { display: block; animation: fadeIn 0.8s ease forwards; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        label { display: block; font-family: 'Space Mono'; font-size: 0.65rem; color: var(--gold); letter-spacing: 2px; margin-bottom: 10px; }
+        input, select, textarea {
+            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            padding: 18px 25px; border-radius: 15px; color: white; margin-bottom: 30px;
+            font-size: 0.9rem; transition: 0.3s;
+        }
+        input:focus { border-color: var(--gold); background: rgba(255, 219, 88, 0.05); }
+
+        .btn-row { display: flex; gap: 15px; margin-top: 20px; }
+        .btn-portal {
+            flex: 1; padding: 20px; border-radius: 50px; border: none;
+            font-family: 'Cinzel'; font-weight: 900; cursor: pointer; transition: 0.3s;
+        }
+        .btn-next { background: var(--gold); color: var(--navy-bg); }
+        .btn-prev { background: transparent; color: var(--white); border: 1px solid var(--border); }
+        .btn-portal:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+        /* --- SUCCESS MODAL --- */
+        .success-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--navy-bg); display: none; justify-content: center; align-items: center;
+            z-index: 2000; text-align: center;
+        }
+
+        @media (max-width: 850px) {
+            .portal-container { grid-template-columns: 1fr; }
+            .portal-info { display: none; }
+            .back-nav { top: 20px; left: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-nav">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        RETURN TO CORE
+    </a>
+
+    <div class="glow"></div>
+
+    <div class="portal-container">
+        <div class="portal-info">
+            <div>
+                <img src="logo.png" alt="Logo" style="height: 100px; margin-bottom: 40px;">
+                <h2>Structural <br><span style="color:var(--gold)">Audit</span> V.01</h2>
+                <p style="color: var(--slate); font-size: 0.85rem; line-height: 1.6;">Initialize your project within our forensic engineering pipeline.</p>
+            </div>
+
+            <div class="step-indicator">
+                <div class="step-item active" id="s1">
+                    <div class="step-circle">01</div>
+                    <span style="font-size: 0.7rem; font-weight: 700;">IDENTITY PROTOCOL</span>
+                </div>
+                <div class="step-item" id="s2">
+                    <div class="step-circle">02</div>
+                    <span style="font-size: 0.7rem; font-weight: 700;">PROJECT INTELLIGENCE</span>
+                </div>
+                <div class="step-item" id="s3">
+                    <div class="step-circle">03</div>
+                    <span style="font-size: 0.7rem; font-weight: 700;">SITE LOGISTICS</span>
+                </div>
+            </div>
+
+            <p style="font-family: 'Space Mono'; font-size: 0.6rem; color: #334155;">© 2026 RELIABLE RESIDENTIALS</p>
+        </div>
+
+        <div class="portal-form">
+            <form id="auditForm">
+                
+                <div class="form-section active" id="section1">
+                    <label>LEGAL REPRESENTATIVE / OWNER</label>
+                    <input type="text" placeholder="Full Legal Name" required>
+                    
+                    <label>SECURE EMAIL ADDRESS</label>
+                    <input type="email" placeholder="official@domain.com" required>
+
+                    <label>ORGANIZATION (OPTIONAL)</label>
+                    <input type="text" placeholder="e.g. Private Estate">
+                    
+                    <div class="btn-row">
+                        <button type="button" class="btn-portal btn-next" onclick="nextSection(2)">CONTINUE TO STEP 02</button>
+                    </div>
+                </div>
+
+                <div class="form-section" id="section2">
+                    <label>DEVELOPMENT CATEGORY</label>
+                    <select>
+                        <option>Bespoke Heritage Villa</option>
+                        <option>Commercial Infrastructure</option>
+                        <option>Seismic Retrofitting</option>
+                    </select>
+
+                    <label>ESTIMATED PROJECT SCALE (SQ. FT)</label>
+                    <input type="number" placeholder="e.g. 5000">
+
+                    <label>PRIMARY ARCHITECTURAL THEME</label>
+                    <select>
+                        <option>Traditional Newari Fusion</option>
+                        <option>Modernist Glass/Steel</option>
+                        <option>Brutalist Sovereign</option>
+                    </select>
+
+                    <div class="btn-row">
+                        <button type="button" class="btn-portal btn-prev" onclick="nextSection(1)">BACK</button>
+                        <button type="button" class="btn-portal btn-next" onclick="nextSection(3)">CONTINUE TO STEP 03</button>
+                    </div>
+                </div>
+
+                <div class="form-section" id="section3">
+                    <label>SITE GEOGRAPHIC COORDINATES</label>
+                    <input type="text" placeholder="Lat / Lon or District/Ward">
+
+                    <label>SOIL TYPE / TERRAIN</label>
+                    <select>
+                        <option>Flat Urban Plot</option>
+                        <option>Himalayan Sloped</option>
+                        <option>Unknown - Requires Audit</option>
+                    </select>
+
+                    <label>PROJECT VISION</label>
+                    <textarea rows="4" placeholder="Briefly describe your requirements..."></textarea>
+
+                    <div class="btn-row">
+                        <button type="button" class="btn-portal btn-prev" onclick="nextSection(2)">BACK</button>
+                        <button type="submit" class="btn-portal btn-next" style="background: #fff; color: #000;">INITIALIZE FULL AUDIT</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="success-overlay" id="success">
+        <div style="max-width: 500px; padding: 40px;">
+            <div style="font-size: 4rem; color: var(--gold); margin-bottom: 20px;">✓</div>
+            <h2 style="font-family:'Cinzel'; margin-bottom: 20px;">Audit Initialized.</h2>
+            <p style="color:var(--slate); line-height: 1.8;">Our principal structural engineering team has received your coordinates.</p>
+            <button onclick="window.location.href='index.html'" class="btn-portal btn-next" style="margin-top: 40px; padding: 15px 40px;">RETURN TO HOME</button>
+        </div>
+    </div>
+
+    <script>
+        function nextSection(sectionNum) {
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.step-item').forEach(s => s.classList.remove('active'));
+            document.getElementById('section' + sectionNum).classList.add('active');
+            for(let i=1; i<=sectionNum; i++) {
+                document.getElementById('s' + i).classList.add('active');
+            }
+        }
+
+        document.getElementById('auditForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('success').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
